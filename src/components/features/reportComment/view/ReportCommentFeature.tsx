@@ -1,20 +1,39 @@
 "use client"
+import { defaultReportCommentRepo } from '@/api/features/reportComment/ReportCommentRepo';
 import CardFeature from '@/components/common/CardFeature';
 import useColor from '@/global/hooks/useColor';
-import { Form, Row, Col, Select, DatePicker, Button, Table, Input } from 'antd';
+import { Form, Row, Col, Select, DatePicker, Button, Table, Input, App, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IoIosSearch } from 'react-icons/io';
 import { SiGoogledocs } from 'react-icons/si';
+import ReportCommentViewModel from '../viewModel/ReportCommentViewModel';
+import { messageDisplay } from '@/utils/helper/MessageDisplay';
 
 const ReportCommentFeature = () => {
   const { green } = useColor();
+  const { message } = App.useApp();
+  const {
+    handleTableChange,
+    isLoading,
+    limit,
+    page,
+    query,
+    reportedList,
+    resultObject,
+    setQuery,
+    total,
+  } = ReportCommentViewModel(defaultReportCommentRepo)
 
   const statusConst = [
     { label: "Tất cả", value: "", color: "" },
     { label: "Đã xử lý", value: true, color: green },
     { label: "Chưa xử lý", value: false, color: "red" },
   ]
+
+  useEffect(() => {
+    messageDisplay(resultObject, message);
+  }, [resultObject]);
 
   return (
     <CardFeature
@@ -23,13 +42,24 @@ const ReportCommentFeature = () => {
       <Form
         layout='vertical'
         className='w-full'
+        onFinish={(values) => {
+          setQuery({
+            status: values?.status !== "" ? values?.status : undefined,
+            from_date: dayjs(values?.date[0]).format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            to_date: dayjs(values.date[1]).format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            page: 1,
+            limit: 10
+          })
+        }}
       >
         {/* filter */}
         <Row gutter={16}>
           {/* status */}
-          <Col xs={24} xl={4}>
+          <Col xs={24} xl={6}>
             <Form.Item
               label={<span className='font-bold'>Trạng thái</span>}
+              name='status'
+              initialValue={""}
             >
               <Select
                 placeholder='Trạng thái'
@@ -38,7 +68,7 @@ const ReportCommentFeature = () => {
             </Form.Item>
           </Col>
           {/* reporter's email */}
-          <Col xs={24} xl={4}>
+          <Col xs={24} xl={6}>
             <Form.Item
               label={<span className='font-bold'>Email báo cáo</span>}
             >
@@ -48,18 +78,8 @@ const ReportCommentFeature = () => {
               />
             </Form.Item>
           </Col>
-          {/* reported's comment */}
-          <Col xs={24} xl={4}>
-            <Form.Item
-              label={<span className='font-bold truncate'>Comment bị báo cáo</span>}
-            >
-              <Input
-                placeholder='ID comment bị báo cáo'
-              />
-            </Form.Item>
-          </Col>
           {/* admin email */}
-          <Col xs={24} xl={4}>
+          <Col xs={24} xl={6}>
             <Form.Item
               label={<span className='font-bold'>Email admin</span>}
             >
@@ -70,16 +90,27 @@ const ReportCommentFeature = () => {
             </Form.Item>
           </Col>
           {/* date */}
-          <Col xs={24} xl={8}>
-            <Form.Item
-              label={<span className='font-bold'>Thời gian</span>}
+          <Col xs={24} xl={6}>
+            <ConfigProvider
+              theme={{
+                token: { colorPrimary: "#898989" },
+              }}
             >
-              <DatePicker.RangePicker
-                style={{ width: '100%' }}
-                format='DD/MM/YYYY'
-                disabledDate={(current) => current && current > dayjs()}
-              />
-            </Form.Item>
+              <Form.Item
+                label={<span className='font-bold'>Thời gian</span>}
+                name={'date'}
+                initialValue={[
+                  dayjs().startOf('month'),
+                  dayjs().endOf('month')
+                ]}
+              >
+                <DatePicker.RangePicker
+                  style={{ width: '100%' }}
+                  format='DD/MM/YYYY'
+                  allowClear={false}
+                />
+              </Form.Item>
+            </ConfigProvider>
           </Col>
           <Col xs={24}>
             <Form.Item
@@ -89,6 +120,7 @@ const ReportCommentFeature = () => {
                 type='primary'
                 className='w-full'
                 htmlType='submit'
+                loading={isLoading}
               >
                 Tra cứu
               </Button>
@@ -125,7 +157,7 @@ const ReportCommentFeature = () => {
           },
           {
             title: "Comment bị báo cáo",
-            dataIndex: "reported_comment",
+            dataIndex: "reported_comment_id",
             align: "center",
           },
           {
@@ -146,30 +178,18 @@ const ReportCommentFeature = () => {
             />,
           }
         ]}
-        dataSource={[
-          {
-            id: "123kjlfasd",
-            reporter_email: "RkX4o@example.com",
-            status: true,
-            admin_email: "admin1@example.com",
-            time: "01/01/2023",
-            reported_comment: "90832h403f",
-          },
-          {
-            id: "9h23458uh2",
-            reporter_email: "ibuoier@example.com",
-            status: false,
-            time: "01/01/2023",
-            reported_comment: "8921bd3f",
-          }
-        ]}
-        rowKey='id'
+        dataSource={reportedList}
+        rowKey={(record) => `${record.user_id}-${record.reported_comment_id}`}
         pagination={{
           showSizeChanger: true,
           pageSizeOptions: [10, 20, 50, 100],
           showTotal: (total) => <div className='font-bold absolute left-0'>Tổng: {total}</div>,
+          current: page,
+          pageSize: limit,
+          total: total,
         }}
         scroll={{ x: "max-content" }}
+        loading={isLoading}
       />
     </CardFeature>
   )
