@@ -10,6 +10,7 @@ import { IoIosSearch } from 'react-icons/io';
 import { SiGoogledocs } from 'react-icons/si';
 import ReportAccountViewModel from '../viewModel/ReportAccountViewModel';
 import { messageDisplay } from '@/utils/helper/MessageDisplay';
+import ReportAccountDetailModal from './ReportAccountDetailModal';
 
 const ReportAccountFeature = () => {
   const { green } = useColor();
@@ -19,11 +20,21 @@ const ReportAccountFeature = () => {
     isLoading,
     limit,
     page,
-    query,
     reportedList,
     resultObject,
     setQuery,
     total,
+    detailModal,
+    setDetailModal,
+    detail,
+    detailLoading,
+    setSelectedRecord,
+    deleteLoading,
+    acceptLoading,
+    activeLoading,
+    deleteReport,
+    acceptReport,
+    activateReport
   } = ReportAccountViewModel(defaultReportAccountRepo)
 
   const statusConst = [
@@ -175,16 +186,20 @@ const ReportAccountFeature = () => {
             {
               title: "Chi tiết",
               align: "center",
-              render: () => <Button
+              render: (_, record) => <Button
                 icon={<SiGoogledocs />}
                 shape='circle'
                 type='primary'
                 ghost
-                onClick={() => { }}
+                onClick={() => {
+                  setDetailModal(true)
+                  setSelectedRecord(record)
+                }}
               />,
             }
           ]}
           dataSource={reportedList}
+          onChange={handleTableChange}
           rowKey={(record) => `${record.user_id}-${record.reported_user_id}`}
           pagination={{
             current: page,
@@ -198,6 +213,20 @@ const ReportAccountFeature = () => {
           loading={isLoading}
         />
       </>
+      {detailModal &&
+        <ReportAccountDetailModal
+          open={detailModal}
+          onCancel={() => setDetailModal(false)}
+          detail={detail}
+          detailLoading={detailLoading}
+          acceptLoading={acceptLoading}
+          deleteLoading={deleteLoading}
+          activeLoading={activeLoading}
+          deleteReport={deleteReport}
+          acceptReport={acceptReport}
+          activateReport={activateReport}
+        />
+      }
     </CardFeature>
   )
 }

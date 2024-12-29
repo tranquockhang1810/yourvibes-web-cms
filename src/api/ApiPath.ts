@@ -12,6 +12,8 @@ export const ApiPath = {
 
   //REPORT ACCOUNT
   GET_REPORTED_ACCOUNT_LIST: getApiPath("users/report"),
+  GET_REPORTED_ACCOUNT_DETAIL: getApiPath("users/report"),
+  ACIVATE_REPORTED_USER: getApiPath("users/report/activate"),
 
   //REPORT POST
   GET_REPORTED_POSTS_LIST: getApiPath("posts/report"),
