@@ -179,7 +179,7 @@ const ReportAccountFeature = () => {
             },
             {
               title: "Thời gian",
-              dataIndex: "time",
+              dataIndex: "created_at",
               align: "center",
               render: (time: string) => dayjs(time).format("DD/MM/YYYY HH:mm:ss"),
             },

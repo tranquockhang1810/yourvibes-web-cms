@@ -10,6 +10,7 @@ import { SiGoogledocs } from 'react-icons/si';
 import ReportPostViewModel from '../viewModel/ReportPostViewModel';
 import { defaultReportPostRepo } from '@/api/features/reportPost/ReportPostRepo';
 import { messageDisplay } from '@/utils/helper/MessageDisplay';
+import ReportPostDetailModal from './ReportPostDetailModal';
 
 const ReportPostFeature = () => {
   const { green } = useColor();
@@ -19,11 +20,21 @@ const ReportPostFeature = () => {
     isLoading,
     limit,
     page,
-    query,
     reportedList,
     resultObject,
     setQuery,
     total,
+    detail,
+    detailLoading,
+    detailModal,
+    setDetailModal,
+    setSelectedRecord,
+    deleteLoading,
+    acceptLoading,
+    activeLoading,
+    deleteReport,
+    acceptReport,
+    activateReport
   } = ReportPostViewModel(defaultReportPostRepo)
 
   const statusConst = [
@@ -49,6 +60,8 @@ const ReportPostFeature = () => {
               status: values?.status !== "" ? values?.status : undefined,
               from_date: dayjs(values?.date[0]).format('YYYY-MM-DDTHH:mm:ss[Z]'),
               to_date: dayjs(values.date[1]).format('YYYY-MM-DDTHH:mm:ss[Z]'),
+              user_email: values?.user_email !== "" ? values?.user_email : undefined,
+              admin_email: values?.admin_email !== "" ? values?.admin_email : undefined,
               page: 1,
               limit: 10
             })
@@ -73,6 +86,7 @@ const ReportPostFeature = () => {
             <Col xs={24} xl={6}>
               <Form.Item
                 label={<span className='font-bold'>Email báo cáo</span>}
+                name={"user_email"}
               >
                 <Input
                   placeholder='Email báo cáo'
@@ -84,6 +98,7 @@ const ReportPostFeature = () => {
             <Col xs={24} xl={6}>
               <Form.Item
                 label={<span className='font-bold'>Email admin</span>}
+                name={"admin_email"}
               >
                 <Input
                   placeholder='Email admin'
@@ -140,7 +155,7 @@ const ReportPostFeature = () => {
             },
             {
               title: "Email báo cáo",
-              dataIndex: "reporter_email",
+              dataIndex: "user_email",
               align: "center",
             },
             {
@@ -164,24 +179,27 @@ const ReportPostFeature = () => {
             },
             {
               title: "Thời gian",
-              dataIndex: "time",
+              dataIndex: "created_at",
               align: "center",
               render: (time: string) => dayjs(time).format("DD/MM/YYYY HH:mm:ss"),
             },
             {
               title: "Chi tiết",
               align: "center",
-              render: () => <Button
+              render: (_, record) => <Button
                 icon={<SiGoogledocs />}
                 shape='circle'
                 type='primary'
                 ghost
-                onClick={() => { }}
+                onClick={() => {
+                  setSelectedRecord(record);
+                  setDetailModal(true)
+                }}
               />,
             }
           ]}
           dataSource={reportedList}
-          rowKey={(record) => `${record.user_id}-${record.reported_post_id}`}
+          rowKey={(record) => `${record.user_email}-${record.reported_post_id}`}
           pagination={{
             showSizeChanger: true,
             pageSizeOptions: [10, 20, 50, 100],
@@ -190,9 +208,24 @@ const ReportPostFeature = () => {
             pageSize: limit,
             total: total,
           }}
+          onChange={handleTableChange}
           scroll={{ x: "max-content" }}
           loading={isLoading}
         />
+        {detailModal &&
+          <ReportPostDetailModal
+            open={detailModal}
+            onCancel={() => setDetailModal(false)}
+            detail={detail}
+            detailLoading={detailLoading}
+            deleteLoading={deleteLoading}
+            acceptLoading={acceptLoading}
+            activeLoading={activeLoading}
+            deleteReport={deleteReport}
+            acceptReport={acceptReport}
+            activateReport={activateReport}
+          />
+        }
       </>
     </CardFeature>
   )

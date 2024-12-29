@@ -1,5 +1,5 @@
 import { ResultObject } from '@/api/baseApiResponseModel/baseApiResponseModel';
-import { ReportCommentListRequestModel, ReportCommentListResponseModel } from '@/api/features/reportComment/model/ReportCommentListModel';
+import { ReportCommentListRequestModel, ReportCommentListResponseModel, ReportCommentDetailRequestModel } from '@/api/features/reportComment/model/ReportCommentListModel';
 import { IReportCommentRepo } from '@/api/features/reportComment/ReportCommentRepo';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -17,8 +17,15 @@ const ReportCommentViewModel = (repo: IReportCommentRepo) => {
     to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
   });
   const [reportedList, setReportedList] = useState<ReportCommentListResponseModel[]>([]);
+  const [detailLoading, setDetailLoading] = useState<boolean>(false);
+  const [detail, setDetail] = useState<ReportCommentListResponseModel | undefined>(undefined);
+  const [detailModal, setDetailModal] = useState<boolean>(false);
+  const [selectedRecord, setSelectedRecord] = useState<ReportCommentListResponseModel | undefined>(undefined);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [acceptLoading, setAcceptLoading] = useState<boolean>(false);
+  const [activeLoading, setActiveLoading] = useState<boolean>(false);
 
-  const getReportedAccounts = async (query: ReportCommentListRequestModel) => {
+  const getReportedComments = async (query: ReportCommentListRequestModel) => {
     try {
       setIsLoading(true);
       const res = await repo.getList({
@@ -53,8 +60,119 @@ const ReportCommentViewModel = (repo: IReportCommentRepo) => {
     });
   };
 
+  const getReportDetail = async (params: ReportCommentDetailRequestModel) => {
+    try {
+      setDetailLoading(true);
+      const res = await repo.getDetail(params);
+      if (res?.data) {
+        setDetail(res?.data);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui lòng thử lại!"
+      })
+    } finally {
+      setDetailLoading(false);
+    }
+  }
+
+  const deleteReport = async (params: ReportCommentDetailRequestModel) => {
+    try {
+      setDeleteLoading(true);
+      const res = await repo.deleteReport(params);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Đã từ chối thành công!"
+        })
+        await getReportedComments({
+          page: 1,
+          limit: 10,
+          from_date: dayjs().startOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        });
+        setDetailModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui lòng thử lại!"
+      })
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
+  const acceptReport = async (params: ReportCommentDetailRequestModel) => {
+    try {
+      setAcceptLoading(true);
+      const res = await repo.acceptReport(params);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Đã chấp nhận thành công!"
+        })
+        await getReportedComments({
+          page: 1,
+          limit: 10,
+          from_date: dayjs().startOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        });
+        setDetailModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui lòng thử lại!"
+      })
+    } finally {
+      setAcceptLoading(false);
+    }
+  }
+
+  const activateReport = async (params: ReportCommentDetailRequestModel) => {
+    try {
+      setActiveLoading(true);
+      const res = await repo.activateReport(params);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Đã kích hoạt lại bài viết!"
+        })
+        await getReportedComments({
+          page: 1,
+          limit: 10,
+          from_date: dayjs().startOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        });
+        setDetailModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui nhập thử lại!"
+      })
+    } finally {
+      setActiveLoading(false);
+    }
+  }
+
   useEffect(() => {
-    getReportedAccounts(query);
+    if (detailModal && selectedRecord) {
+      getReportDetail({
+        user_id: selectedRecord?.user_id,
+        reported_comment_id: selectedRecord?.reported_comment_id
+      });
+    }
+  }, [detailModal, selectedRecord])
+
+  useEffect(() => {
+    getReportedComments(query);
   }, [query])
 
   return {
@@ -67,6 +185,17 @@ const ReportCommentViewModel = (repo: IReportCommentRepo) => {
     total,
     page,
     limit,
+    detailLoading,
+    detail,
+    detailModal,
+    setDetailModal,
+    setSelectedRecord,
+    deleteLoading,
+    acceptLoading,
+    activeLoading,
+    deleteReport,
+    acceptReport,
+    activateReport
   }
 }
 

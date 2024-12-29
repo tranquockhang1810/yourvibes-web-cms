@@ -1,6 +1,6 @@
 export interface CommentsResponseModel {
 	id: string;
-	postId: string;
+	post_id: string;
 	parent_id?: string;
 	content: string;
 	like_count: number;
@@ -13,4 +13,5 @@ export interface CommentsResponseModel {
 		name?: string;
 	};
 	is_liked?: boolean;
+	status?: boolean;
 }

@@ -17,10 +17,13 @@ export const ApiPath = {
 
   //REPORT POST
   GET_REPORTED_POSTS_LIST: getApiPath("posts/report"),
-  GET_REPORTED_POST_DETAIL: getApiPath("posts/report/"),
+  GET_REPORTED_POST_DETAIL: getApiPath("posts/report"),
+  ACIVATE_REPORTED_POST: getApiPath("posts/report/activate"),
 
   //REPORT COMMENT
   GET_REPORTED_COMMENT_LIST: getApiPath("comments/report"),
+  GET_REPORTED_COMMENT_DETAIL: getApiPath("comments/report"),
+  ACIVATE_REPORTED_COMMENT: getApiPath("comments/report/activate"),
 };
 
 function getApiPath(path: string) {

@@ -1,5 +1,5 @@
 import { ResultObject } from '@/api/baseApiResponseModel/baseApiResponseModel';
-import { ReportPostListRequestModel, ReportPostListResponseModel } from '@/api/features/reportPost/model/ReportPostListModel';
+import { ReportPostDetailRequestModel, ReportPostListRequestModel, ReportPostListResponseModel } from '@/api/features/reportPost/model/ReportPostListModel';
 import { IReportPostRepo } from '@/api/features/reportPost/ReportPostRepo';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -17,8 +17,15 @@ const ReportPostViewModel = (repo: IReportPostRepo) => {
     to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
   });
   const [reportedList, setReportedList] = useState<ReportPostListResponseModel[]>([]);
+  const [detailLoading, setDetailLoading] = useState<boolean>(false);
+  const [detail, setDetail] = useState<ReportPostListResponseModel | undefined>(undefined);
+  const [detailModal, setDetailModal] = useState<boolean>(false);
+  const [selectedRecord, setSelectedRecord] = useState<ReportPostListResponseModel | undefined>(undefined);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const [acceptLoading, setAcceptLoading] = useState<boolean>(false);
+  const [activeLoading, setActiveLoading] = useState<boolean>(false);
 
-  const getReportedAccounts = async (query: ReportPostListRequestModel) => {
+  const getReportedPosts = async (query: ReportPostListRequestModel) => {
     try {
       setIsLoading(true);
       const res = await repo.getList({
@@ -53,12 +60,119 @@ const ReportPostViewModel = (repo: IReportPostRepo) => {
     });
   };
 
-  const getReportDetail = async (id: string) => {
-    
+  const getReportDetail = async (params: ReportPostDetailRequestModel) => {
+    try {
+      setDetailLoading(true);
+      const res = await repo.getDetail(params);
+      if (res?.data) {
+        setDetail(res?.data);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui lòng thử lại!"
+      })
+    } finally {
+      setDetailLoading(false);
+    }
+  }
+
+  const deleteReport = async (params: ReportPostDetailRequestModel) => {
+    try {
+      setDeleteLoading(true);
+      const res = await repo.deleteReport(params);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Đã từ chối thành công!"
+        })
+        await getReportedPosts({
+          page: 1,
+          limit: 10,
+          from_date: dayjs().startOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        });
+        setDetailModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui lòng thử lại!"
+      })
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
+
+  const acceptReport = async (params: ReportPostDetailRequestModel) => {
+    try {
+      setAcceptLoading(true);
+      const res = await repo.acceptReport(params);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Đã chấp nhận thành công!"
+        })
+        await getReportedPosts({
+          page: 1,
+          limit: 10,
+          from_date: dayjs().startOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        });
+        setDetailModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui lòng thử lại!"
+      })
+    } finally {
+      setAcceptLoading(false);
+    }
+  }
+
+  const activateReport = async (params: ReportPostDetailRequestModel) => {
+    try {
+      setActiveLoading(true);
+      const res = await repo.activateReport(params);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Đã kích hoạt lại bài viết!"
+        })
+        await getReportedPosts({
+          page: 1,
+          limit: 10,
+          from_date: dayjs().startOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+          to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
+        });
+        setDetailModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui nhập thử lại!"
+      })
+    } finally {
+      setActiveLoading(false);
+    }
   }
 
   useEffect(() => {
-    getReportedAccounts(query);
+    if (detailModal && selectedRecord) {
+      getReportDetail({
+        user_id: selectedRecord?.user_id,
+        reported_post_id: selectedRecord?.reported_post_id
+      });
+    }
+  }, [detailModal, selectedRecord])
+
+  useEffect(() => {
+    getReportedPosts(query);
   }, [query])
 
   return {
@@ -71,6 +185,17 @@ const ReportPostViewModel = (repo: IReportPostRepo) => {
     total,
     page,
     limit,
+    detailLoading,
+    detail,
+    detailModal,
+    setDetailModal,
+    setSelectedRecord,
+    deleteLoading,
+    acceptLoading,
+    activeLoading,
+    deleteReport,
+    acceptReport,
+    activateReport
   }
 }
 

@@ -9,6 +9,7 @@ import { IoIosSearch } from 'react-icons/io';
 import { SiGoogledocs } from 'react-icons/si';
 import ReportCommentViewModel from '../viewModel/ReportCommentViewModel';
 import { messageDisplay } from '@/utils/helper/MessageDisplay';
+import ReportCommentDetailModal from './ReportCommentDetailModal';
 
 const ReportCommentFeature = () => {
   const { green } = useColor();
@@ -18,11 +19,21 @@ const ReportCommentFeature = () => {
     isLoading,
     limit,
     page,
-    query,
     reportedList,
     resultObject,
     setQuery,
     total,
+    detail,
+    detailLoading,
+    detailModal,
+    setDetailModal,
+    setSelectedRecord,
+    deleteLoading,
+    acceptLoading,
+    activeLoading,
+    deleteReport,
+    acceptReport,
+    activateReport
   } = ReportCommentViewModel(defaultReportCommentRepo)
 
   const statusConst = [
@@ -47,6 +58,8 @@ const ReportCommentFeature = () => {
             status: values?.status !== "" ? values?.status : undefined,
             from_date: dayjs(values?.date[0]).format('YYYY-MM-DDTHH:mm:ss[Z]'),
             to_date: dayjs(values.date[1]).format('YYYY-MM-DDTHH:mm:ss[Z]'),
+            admin_email: values?.admin_email !== "" ? values?.admin_email : undefined,
+            user_email: values?.user_email !== "" ? values?.user_email : undefined,
             page: 1,
             limit: 10
           })
@@ -71,6 +84,7 @@ const ReportCommentFeature = () => {
           <Col xs={24} xl={6}>
             <Form.Item
               label={<span className='font-bold'>Email báo cáo</span>}
+              name={"user_email"}
             >
               <Input
                 placeholder='Email báo cáo'
@@ -82,6 +96,7 @@ const ReportCommentFeature = () => {
           <Col xs={24} xl={6}>
             <Form.Item
               label={<span className='font-bold'>Email admin</span>}
+              name={"admin_email"}
             >
               <Input
                 placeholder='Email admin'
@@ -138,7 +153,7 @@ const ReportCommentFeature = () => {
           },
           {
             title: "Email báo cáo",
-            dataIndex: "reporter_email",
+            dataIndex: "user_email",
             align: "center",
           },
           {
@@ -162,19 +177,22 @@ const ReportCommentFeature = () => {
           },
           {
             title: "Thời gian",
-            dataIndex: "time",
+            dataIndex: "created_at",
             align: "center",
             render: (time: string) => dayjs(time).format("DD/MM/YYYY HH:mm:ss"),
           },
           {
             title: "Chi tiết",
             align: "center",
-            render: () => <Button
+            render: (_, record) => <Button
               icon={<SiGoogledocs />}
               shape='circle'
               type='primary'
               ghost
-              onClick={() => { }}
+              onClick={() => {
+                setSelectedRecord(record);
+                setDetailModal(true)
+              }}
             />,
           }
         ]}
@@ -188,9 +206,24 @@ const ReportCommentFeature = () => {
           pageSize: limit,
           total: total,
         }}
+        onChange={handleTableChange}
         scroll={{ x: "max-content" }}
         loading={isLoading}
       />
+      {detailModal &&
+        <ReportCommentDetailModal
+          open={detailModal}
+          onCancel={() => setDetailModal(false)}
+          detail={detail}
+          detailLoading={detailLoading}
+          deleteLoading={deleteLoading}
+          acceptLoading={acceptLoading}
+          activeLoading={activeLoading}
+          deleteReport={deleteReport}
+          acceptReport={acceptReport}
+          activateReport={activateReport}
+        />
+      }
     </CardFeature>
   )
 }

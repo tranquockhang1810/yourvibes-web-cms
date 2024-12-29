@@ -1,10 +1,12 @@
-import { ReportAccountDetailRequestModel, ReportAccountListResponseModel } from '@/api/features/reportAccount/model/ReportAccountListModel'
+import { ReportCommentListResponseModel, ReportCommentDetailRequestModel } from '@/api/features/reportComment/model/ReportCommentListModel'
+import Comment from '@/components/common/Comment'
+import Post from '@/components/common/Post'
 import useColor from '@/global/hooks/useColor'
 import { Button, Col, Modal, Row } from 'antd'
 import dayjs from 'dayjs'
 import React from 'react'
 
-const ReportPostDetailModal = ({
+const ReportCommentDetailModal = ({
   open,
   onCancel,
   detail,
@@ -18,14 +20,14 @@ const ReportPostDetailModal = ({
 }: {
   open: boolean,
   onCancel: () => void,
-  detail?: ReportAccountListResponseModel,
+  detail?: ReportCommentListResponseModel,
   detailLoading: boolean,
   deleteLoading: boolean,
   acceptLoading: boolean,
   activeLoading: boolean,
-  deleteReport: (params: ReportAccountDetailRequestModel) => Promise<void>,
-  acceptReport: (params: ReportAccountDetailRequestModel) => Promise<void>,
-  activateReport: (params: ReportAccountDetailRequestModel) => Promise<void>,
+  deleteReport: (params: ReportCommentDetailRequestModel) => Promise<void>,
+  acceptReport: (params: ReportCommentDetailRequestModel) => Promise<void>,
+  activateReport: (params: ReportCommentDetailRequestModel) => Promise<void>,
 }) => {
   const { green } = useColor();
   const statusConst = [
@@ -51,22 +53,9 @@ const ReportPostDetailModal = ({
           className="overflow-visible text-ellipsis"
         >
           <>
-            {label?.includes("Tài khoản bị báo cáo") ? (
-              <a
-                href={`${process.env.NEXT_PUBLIC_CLIENT_ENDPOINT!}/user/${detail?.reported_user?.id}`}
-                target="_blank"
-              >
-                {value && value !== "-" && value !== "Invalid Date"
-                  ? value
-                  : "Không có thông tin"}
-              </a>
-            ) : (
-              <>
-                {value && value !== "-" && value !== "Invalid Date"
-                  ? value
-                  : "Không có thông tin"}
-              </>
-            )}
+            {value && value !== "-" && value !== "Invalid Date"
+              ? value
+              : "Không có thông tin"}
           </>
         </span>
       </div>
@@ -78,26 +67,22 @@ const ReportPostDetailModal = ({
       open={open}
       onCancel={onCancel}
       title={<span className='font-bold text-xl'>Chi tiết báo cáo</span>}
-      width={600}
+      width={1200}
       centered
       footer={null}
       maskClosable={false}
       loading={detailLoading}
     >
       <Row gutter={[8, 32]} justify={"space-between"} className="mt-4 mb-10">
-        <Col xs={24}>
+        <Col xs={24} lg={11}>
           {renderItem(
             "Thời gian tạo",
             dayjs(detail?.created_at).format("DD/MM/YYYY HH:mm:ss")
           )}
           {renderItem(
-            "Tài khoản bị báo cáo",
-            detail?.reported_user?.email
-          )}
-          {renderItem(
-            "Trạng thái tài khoản bị báo cáo",
-            detail?.reported_user?.status ? "Hoạt động" : "Khóa",
-            detail?.reported_user?.status ? "green" : "red"
+            "Trạng thái bình luận bị báo cáo",
+            detail?.reported_comment?.status ? "Hoạt động" : "Khóa",
+            detail?.reported_comment?.status ? "green" : "red"
           )}
           {renderItem(
             "Trạng thái",
@@ -117,21 +102,33 @@ const ReportPostDetailModal = ({
             detail?.reason
           )}
         </Col>
+        <Col xs={24} lg={11} className="flex justify-center">
+          <div className='font-bold w-full my-2 text-lg'>Bài viết</div>
+          <Post post={detail?.post}>
+            {detail?.post?.parent_post && (
+              <Post post={detail?.post?.parent_post} isParentPost/>
+            )}
+          </Post>
+          <div className='font-bold w-full my-2 text-lg'>Bình luận</div>
+          <Comment
+            comment={detail?.reported_comment}
+          />
+        </Col>
       </Row>
       <Row gutter={[8, 32]} justify={"space-between"}>
         {detail?.status === true ? (
           <>
-            {!detail?.reported_user?.status && (
+            {!detail?.reported_comment?.status && (
               <Col xs={24}>
                 <Button
                   type='primary'
                   className='w-full'
                   loading={activeLoading}
                   onClick={() => activateReport({
-                    user_id: detail?.reported_user_id
+                    comment_id: detail?.reported_comment_id
                   })}
                 >
-                  Mở lại tài khoản
+                  Mở lại bình luận
                 </Button>
               </Col>
             )}
@@ -146,7 +143,7 @@ const ReportPostDetailModal = ({
                 loading={deleteLoading}
                 onClick={() => deleteReport({
                   user_id: detail?.user_id,
-                  reported_user_id: detail?.reported_user_id
+                  reported_comment_id: detail?.reported_comment_id
                 })}
               >
                 Từ chối
@@ -159,7 +156,7 @@ const ReportPostDetailModal = ({
                 loading={acceptLoading}
                 onClick={() => acceptReport({
                   user_id: detail?.user_id,
-                  reported_user_id: detail?.reported_user_id
+                  reported_comment_id: detail?.reported_comment_id
                 })}
               >
                 Chấp nhận
@@ -172,4 +169,4 @@ const ReportPostDetailModal = ({
   )
 }
 
-export default ReportPostDetailModal
+export default ReportCommentDetailModal

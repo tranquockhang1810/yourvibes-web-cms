@@ -4,32 +4,19 @@ import { PostResponseModel } from "@/api/features/post/models/PostResponseModel"
 import { useAuth } from "@/context/auth/useAuth";
 import {
   Avatar,
-  Button,
   Card,
   Col,
-  Dropdown,
-  Form,
-  Menu,
-  MenuProps,
-  Modal,
-  Popover,
   Row,
-  Tooltip,
 } from "antd";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import {
   FaGlobe,
-  FaHeart,
   FaLock,
-  FaRegComments,
-  FaRegHeart,
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { getTimeDiff } from "@/utils/helper/DateTransfer";
 import { RiAdvertisementLine } from "react-icons/ri";
-import { HiDotsVertical } from "react-icons/hi";
 import { BsFillPeopleFill } from "react-icons/bs";
-import { IoShareSocialOutline } from "react-icons/io5";
 import MediaView from "./MediaView";
 import useColor from "@/global/hooks/useColor";
 
@@ -64,10 +51,9 @@ const Post: React.FC<IPost> = React.memo(
     return (
       <Card
         style={{
-          margin: 10,
           borderColor: isParentPost ? brandPrimary : "black",
-          maxWidth: 600,
           width: "100%",
+          borderRadius: 10,
         }}
         title={
           <Row gutter={[8, 8]} className="m-2"
