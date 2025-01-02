@@ -24,6 +24,10 @@ export const ApiPath = {
   GET_REPORTED_COMMENT_LIST: getApiPath("comments/report"),
   GET_REPORTED_COMMENT_DETAIL: getApiPath("comments/report"),
   ACIVATE_REPORTED_COMMENT: getApiPath("comments/report/activate"),
+
+  //ADS TRANSACTIONS
+  GET_ADS_TRANSACTION_LIST: getApiPath("advertise/admin"),
+  GET_ADS_TRANSACTION_DETAIL: getApiPath("advertise"),
 };
 
 function getApiPath(path: string) {

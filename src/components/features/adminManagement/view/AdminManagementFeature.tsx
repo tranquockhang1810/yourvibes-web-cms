@@ -182,7 +182,7 @@ const AdminManagementFeature = () => {
           {
             title: "STT",
             align: "center",
-            render: (_, __, index) => index + 1,
+            render: (_, __, index) => page * limit - limit + index + 1,
             width: "6%"
           },
           {
@@ -233,7 +233,6 @@ const AdminManagementFeature = () => {
             title: "Hành động",
             align: "center",
             width: "12%",
-            fixed: "right",
             render: (_, record) => <div className='flex justify-evenly'>
               <Tooltip title={record?.role === true ? 'Cập nhật sang role "Admin"' : 'Cập nhật sang role "Root Admin"'}>
                 <Button

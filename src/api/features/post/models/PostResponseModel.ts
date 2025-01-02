@@ -1,4 +1,5 @@
 import { Privacy } from "@/api/baseApiResponseModel/baseApiResponseModel"
+import { UserModel } from "../../authenticate/model/LoginModel"
 
 export interface PostResponseModel {
   id?: string
@@ -8,12 +9,7 @@ export interface PostResponseModel {
   created_at?: string,
   updated_at?: string,
   user_id?: string,
-  user?: {
-    id?: string,
-    family_name?: string,
-    name?: string,
-    avatar_url?: string
-  },
+  user?: UserModel,
   like_count?: number,
   comment_count?: number,
   privacy?: Privacy,

@@ -62,7 +62,6 @@ const Post: React.FC<IPost> = React.memo(
               xs={4}
               md={2}
               className="hover:cursor-pointer"
-              onClick={() => router.push(`/user/${post?.user?.id}`)}
             >
               <Avatar src={post?.user?.avatar_url} shape="circle" />
             </Col>
@@ -71,7 +70,6 @@ const Post: React.FC<IPost> = React.memo(
                 <Col
                   span={24}
                   className="hover:cursor-pointer hover:underline"
-                  onClick={() => router.push(`/user/${post?.user?.id}`)}
                 >
                   <span style={{ fontWeight: "bold", fontSize: 14 }}>
                     {post?.user?.family_name} {post?.user?.name}
@@ -117,7 +115,7 @@ const Post: React.FC<IPost> = React.memo(
           {!isParentPost && children ? (
             <Col span={24}>
               {post?.content && (
-                <span className="pl-2">{post?.content}</span>
+                <span>{post?.content}</span>
               )}
               {children}
             </Col>

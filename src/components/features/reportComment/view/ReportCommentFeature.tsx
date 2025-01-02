@@ -148,7 +148,7 @@ const ReportCommentFeature = () => {
           {
             title: "STT",
             align: "center",
-            render: (_, __, index) => index + 1,
+            render: (_, __, index) => page * limit - limit + index + 1,
             width: "6%"
           },
           {
