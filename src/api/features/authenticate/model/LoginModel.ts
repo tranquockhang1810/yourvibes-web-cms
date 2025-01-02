@@ -13,6 +13,7 @@ export interface UserModel {
   family_name?: string,
   name?: string,
   email?: string,
+  avatar_url?: string,
   phone_number?: string,
   birthday?: string,
   status?: boolean,
