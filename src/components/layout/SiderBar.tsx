@@ -111,7 +111,7 @@ const SiderBar = () => {
         defaultSelectedKeys={defaultSelectedKeys}
         defaultOpenKeys={defaultOpenKeys}
         mode="inline"
-        items={items}
+        items={user?.role ? items : items.filter(item => item?.key !== '/root-admin')}
         theme='dark'
       />
     </ConfigProvider>

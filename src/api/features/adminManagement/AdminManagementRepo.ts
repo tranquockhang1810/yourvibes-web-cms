@@ -5,11 +5,13 @@ import client from "@/api/client";
 import { ApiPath } from "@/api/ApiPath";
 import { CreateAdminRequestModel } from "./model/CreateAdminModel";
 import { UpdateAdminRequestModel } from "./model/UpdateAdminModel";
+import { ResetPasswordRequestModel } from "./model/ResetPasswordModel";
 
 interface IAdminManagementRepo {
   getList(params: AdminListRequestModel): Promise<BaseApiResponseModel<UserModel[]>>;
   createAdmin(params: CreateAdminRequestModel): Promise<BaseApiResponseModel<UserModel>>;
-  updateAdmin(params: UpdateAdminRequestModel): Promise<BaseApiResponseModel<UserModel>>
+  updateAdmin(params: UpdateAdminRequestModel): Promise<BaseApiResponseModel<UserModel>>;
+  resetPassword(params: ResetPasswordRequestModel): Promise<BaseApiResponseModel<UserModel>>
 }
 
 export class AdminManagementRepo implements IAdminManagementRepo {
@@ -23,6 +25,10 @@ export class AdminManagementRepo implements IAdminManagementRepo {
 
   async updateAdmin(params: UpdateAdminRequestModel): Promise<BaseApiResponseModel<UserModel>> {
     return client.patch(ApiPath.UPDATE_ADMIN, params);
+  }
+
+  async resetPassword(params: ResetPasswordRequestModel): Promise<BaseApiResponseModel<UserModel>> {
+    return client.post(ApiPath.RESET_PASSWORD, params);
   }
 }
 

@@ -2,6 +2,7 @@ import { ResultObject } from '@/api/baseApiResponseModel/baseApiResponseModel'
 import { AdminManagementRepo } from '@/api/features/adminManagement/AdminManagementRepo'
 import { AdminListRequestModel } from '@/api/features/adminManagement/model/AdminListModel'
 import { CreateAdminRequestModel } from '@/api/features/adminManagement/model/CreateAdminModel'
+import { ResetPasswordRequestModel } from '@/api/features/adminManagement/model/ResetPasswordModel'
 import { UpdateAdminRequestModel } from '@/api/features/adminManagement/model/UpdateAdminModel'
 import { UserModel } from '@/api/features/authenticate/model/LoginModel'
 import dayjs from 'dayjs'
@@ -20,8 +21,8 @@ const AdminManagementViewModel = (repo: AdminManagementRepo) => {
   });
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [createLoading, setCreateLoading] = useState<boolean>(false);
-  const [selectedAdmin, setSelectedAdmin] = useState<UserModel | null>(null);
   const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+  const [resetPasswordLoading, setResetPasswordLoading] = useState<boolean>(false);
 
   const getAdminsList = async (query: any) => {
     try {
@@ -124,6 +125,31 @@ const AdminManagementViewModel = (repo: AdminManagementRepo) => {
     }
   }
 
+  const handleResetPassword = async (values: ResetPasswordRequestModel) => {
+    try {
+      setResetPasswordLoading(true);
+      const res = await repo.resetPassword(values);
+      if (res?.message === 'Success') {
+        setResultObject({
+          type: 'success',
+          message: "Cập nhật thành công!"
+        })
+        getAdminsList({
+          page: 1,
+          limit: 10
+        })
+      }
+    } catch (error) {
+      console.error(error);
+      setResultObject({
+        type: 'error',
+        message: "Lỗi hệ thống, vui liệu thử lại!"
+      })
+    } finally {
+      setResetPasswordLoading(false);
+    }
+  }
+
   useEffect(() => {
     getAdminsList(query)
   }, [query])
@@ -143,7 +169,9 @@ const AdminManagementViewModel = (repo: AdminManagementRepo) => {
     createLoading,
     handleCreateAdmin,
     handleUpdateAdmin,
-    updateLoading
+    updateLoading,
+    handleResetPassword,
+    resetPasswordLoading
   }
 }
 

@@ -2,7 +2,7 @@
 import { defaultAdminManagementRepo } from '@/api/features/adminManagement/AdminManagementRepo';
 import CardFeature from '@/components/common/CardFeature';
 import useColor from '@/global/hooks/useColor';
-import { Form, Row, Col, Select, DatePicker, Button, Table, Input, App, Tooltip, ConfigProvider } from 'antd';
+import { Form, Row, Col, Select, Button, Table, Input, App, Tooltip, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect } from 'react'
 import { IoIosSearch, IoMdPersonAdd } from 'react-icons/io';
@@ -11,6 +11,7 @@ import AdminManagementViewModel from '../viewModel/AdminManagementViewModel';
 import { messageDisplay } from '@/utils/helper/MessageDisplay';
 import CreateAdminModal from './CreateAdminModal';
 import { FaUserSlash, FaUserCheck } from 'react-icons/fa';
+import { MdOutlineLockReset } from "react-icons/md";
 
 const AdminManagementFeature = () => {
   const { green } = useColor();
@@ -30,7 +31,9 @@ const AdminManagementFeature = () => {
     createLoading,
     handleCreateAdmin,
     handleUpdateAdmin,
-    updateLoading
+    updateLoading,
+    handleResetPassword,
+    resetPasswordLoading
   } = AdminManagementViewModel(defaultAdminManagementRepo)
 
   const statusConst = [
@@ -292,6 +295,41 @@ const AdminManagementFeature = () => {
                         },
                         okButtonProps: {
                           loading: updateLoading
+                        }
+                      })
+                    }}
+                  />
+                </Tooltip>
+              </ConfigProvider>
+              <ConfigProvider
+                theme={{ token: { colorPrimary: 'blue' } }}
+              >
+                <Tooltip title={'Đặt lại mật khẩu'}>
+                  <Button
+                    icon={<MdOutlineLockReset />}
+                    shape='circle'
+                    type='primary'
+                    ghost
+                    onClick={() => {
+                      const confirmModal = modal.confirm({
+                        title: `Đặt lại mật khẩu cho tài khoản: "${record?.name}"?`,
+                        content: "Mật khẩu mặc định: 12345678",
+                        okText: 'OK',
+                        okType: 'primary',
+                        cancelText: 'Hủy',
+                        centered: true,
+                        onOk: async () => {
+                          handleResetPassword({
+                            email: record?.email,
+                            new_password: '12345678'
+                          })
+                            .then(() => {
+                              form.resetFields();
+                              confirmModal.destroy();
+                            });
+                        },
+                        okButtonProps: {
+                          loading: resetPasswordLoading
                         }
                       })
                     }}

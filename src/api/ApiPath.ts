@@ -4,11 +4,13 @@ export const ApiPath = {
 
   //INFO
   UPDATE_INFO: getApiPath("admins/"),
+  CHANGE_PASSWORD: getApiPath("admins/change_password"),
 
   //ADMIN MANAGEMENT
   GET_ADMINS_LIST: getApiPath("admins/"),
   CREATE_ADMIN: getApiPath("admins/super_admin"),
   UPDATE_ADMIN: getApiPath("admins/super_admin"),
+  RESET_PASSWORD: getApiPath("admins/super_admin/forgot_admin_password"),
 
   //REPORT ACCOUNT
   GET_REPORTED_ACCOUNT_LIST: getApiPath("users/report"),
@@ -28,6 +30,10 @@ export const ApiPath = {
   //ADS TRANSACTIONS
   GET_ADS_TRANSACTION_LIST: getApiPath("advertise/admin"),
   GET_ADS_TRANSACTION_DETAIL: getApiPath("advertise"),
+
+  //DASHBOARD
+  GET_CHART_DATA: getApiPath("revenue/monthly_revenue"),
+  GET_STATS: getApiPath("revenue/system_stats"),
 };
 
 function getApiPath(path: string) {
