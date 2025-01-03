@@ -1,3 +1,4 @@
+"use client";
 import CardFeature from "@/components/common/CardFeature"
 import useColor from "@/global/hooks/useColor"
 import { CurrencyFormat } from "@/utils/helper/CurrencyFormat"

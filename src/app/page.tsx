@@ -1,10 +1,15 @@
 "use client";
-import DashboardFeature from "@/components/features/dashboard/view/DashboardFeature";
+import dynamic from 'next/dynamic';
 import MainLayout from "@/components/layout/MainLayout";
 import { useAuth } from "@/context/auth/useAuth";
 import { Spin } from "antd";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+
+const DashboardFeature = dynamic(
+  () => import("@/components/features/dashboard/view/DashboardFeature"),
+  { ssr: false }
+)
 
 const HomePage = () => {
   const { isAuthenticated, checkingLoading } = useAuth();
