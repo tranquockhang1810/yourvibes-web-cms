@@ -33,7 +33,7 @@ const MediaView: React.FC<MediaViewProps> = React.memo(({ mediaItems }) => {
   };
 
   return (
-    <div style={{ position: 'relative', maxWidth: '100%', overflow: 'hidden' }}>
+    <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
       <Slider {...settings}>
         {mediaItems?.map((media, index) => {
           const isVideo = media?.media_url?.endsWith('.mp4') || media?.media_url?.endsWith('.mov');
@@ -46,13 +46,13 @@ const MediaView: React.FC<MediaViewProps> = React.memo(({ mediaItems }) => {
                   loop
                   muted
                   playing
-                  style={{ maxWidth: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', objectFit: 'cover' }}
                 />
               ) : (
                 <img
                   src={media?.media_url || ""}
                   alt={`media-${index}`}
-                  style={{ maxWidth: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', objectFit: 'cover', height: 400 }}
                 />
               )}
             </div>

@@ -110,7 +110,7 @@ const DashboardFeature = () => {
         <Col xs={24} lg={6}>
           <Card className="h-full w-full" loading={loading}>
             <Statistic
-              title={<span className="font-bold text-black text-md">Doanh thu hôm qua {dayjs().subtract(1, 'month').format('[(]DD/MM/YYYY[)]')}</span>}
+              title={<span className="font-bold text-black text-md">Doanh thu hôm qua {dayjs().subtract(1, 'day').format('[(]DD/MM/YYYY[)]')}</span>}
               value={stats?.previous_days_revenue || 0}
               valueStyle={{ color: green, fontWeight: 'bold' }}
               formatter={formatter}

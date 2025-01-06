@@ -101,18 +101,18 @@ const ReportCommentDetailModal = ({
             "Lý do",
             detail?.reason
           )}
+          <div className='font-bold w-full my-2 text-lg'>Bình luận</div>
+          <Comment
+            comment={detail?.reported_comment}
+          />
         </Col>
         <Col xs={24} lg={11} className="flex justify-center">
           <div className='font-bold w-full my-2 text-lg'>Bài viết</div>
           <Post post={detail?.post}>
             {detail?.post?.parent_post && (
-              <Post post={detail?.post?.parent_post} isParentPost/>
+              <Post post={detail?.post?.parent_post} isParentPost />
             )}
           </Post>
-          <div className='font-bold w-full my-2 text-lg'>Bình luận</div>
-          <Comment
-            comment={detail?.reported_comment}
-          />
         </Col>
       </Row>
       <Row gutter={[8, 32]} justify={"space-between"}>

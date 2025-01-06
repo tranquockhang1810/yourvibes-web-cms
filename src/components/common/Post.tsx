@@ -111,18 +111,18 @@ const Post: React.FC<IPost> = React.memo(
           </Row>
         }
       >
-        <Row gutter={[8, 8]} className="mx-2">
+        <Row gutter={[8, 8]} className="mx-2 w-full">
           {!isParentPost && children ? (
             <Col span={24}>
               {post?.content && (
-                <span>{post?.content}</span>
+                <div className="mb-2">{post?.content}</div>
               )}
               {children}
             </Col>
           ) : post?.content && post?.parent_id ? (
             <div>
-              <div style={{ paddingLeft: 10 }}>
-                <span>{post?.content}</span>
+              <div className="mb-2">
+                {post?.content}
               </div>
               <div style={{ paddingLeft: 5, paddingRight: 5 }}>
                 <div
@@ -146,9 +146,9 @@ const Post: React.FC<IPost> = React.memo(
               </div>
             </div>
           ) : (
-            <Col span={22}>
+            <Col span={24}>
               {post?.content && (
-                <span className="pl-2">{post?.content}</span>
+                <div className="mb-2">{post?.content}</div>
               )}
               {post?.media && post?.media?.length > 0 && (
                 <MediaView mediaItems={post?.media} />

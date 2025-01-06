@@ -141,7 +141,7 @@ const ReportCommentViewModel = (repo: IReportCommentRepo) => {
       if (res?.message === 'Success') {
         setResultObject({
           type: 'success',  
-          message: "Đã kích hoạt lại bài viết!"
+          message: "Đã kích hoạt lại bình luận!"
         })
         await getReportedComments({
           page: 1,
