@@ -29,7 +29,7 @@ class ReportPostRepo implements IReportPostRepo {
   }
 
   async activateReport(params: ReportPostDetailRequestModel): Promise<BaseApiResponseModel<ReportPostListResponseModel>> {
-    return client.patch(`${ApiPath.ACIVATE_REPORTED_POST}/${params.user_id}`);
+    return client.patch(`${ApiPath.ACIVATE_REPORTED_POST}/${params.post_id}`);
   }
 }
 

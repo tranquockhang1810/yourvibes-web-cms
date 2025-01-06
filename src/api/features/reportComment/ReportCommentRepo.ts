@@ -29,7 +29,7 @@ class ReportCommentRepo implements IReportCommentRepo {
   }
 
   async activateReport(params: ReportCommentDetailRequestModel): Promise<BaseApiResponseModel<ReportCommentListResponseModel>> {
-    return client.patch(`${ApiPath.ACIVATE_REPORTED_COMMENT}/${params.user_id}`);
+    return client.patch(`${ApiPath.ACIVATE_REPORTED_COMMENT}/${params.comment_id}`);
   }
 }
 

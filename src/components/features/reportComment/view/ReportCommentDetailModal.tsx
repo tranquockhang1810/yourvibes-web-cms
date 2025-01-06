@@ -124,7 +124,7 @@ const ReportCommentDetailModal = ({
                   type='primary'
                   className='w-full'
                   loading={activeLoading}
-                  onClick={() => activateReport({
+                  onClick={async () => await activateReport({
                     comment_id: detail?.reported_comment_id
                   })}
                 >

@@ -140,7 +140,7 @@ const ReportCommentViewModel = (repo: IReportCommentRepo) => {
       const res = await repo.activateReport(params);
       if (res?.message === 'Success') {
         setResultObject({
-          type: 'success',
+          type: 'success',  
           message: "Đã kích hoạt lại bài viết!"
         })
         await getReportedComments({
@@ -150,6 +150,11 @@ const ReportCommentViewModel = (repo: IReportCommentRepo) => {
           to_date: dayjs().endOf('month').format('YYYY-MM-DDTHH:mm:ss[Z]'),
         });
         setDetailModal(false);
+      } else {
+        setResultObject({
+          type: 'error',
+          message: "Lỗi hệ thống, vui nhập thử lại!"
+        })
       }
     } catch (error) {
       console.error(error);

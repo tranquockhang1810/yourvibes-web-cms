@@ -133,7 +133,7 @@ const AdsTransactionsFeature = () => {
             </Form.Item>
           </Col>
           {/* date */}
-          <Col xs={24} xl={4}>
+          <Col xs={24} lg={4}>
             <ConfigProvider
               theme={{
                 token: { colorPrimary: "#898989" },
